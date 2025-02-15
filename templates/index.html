@@ -3,92 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Upload and Resize</title>
+    <title>Image Upload and Normalize</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
-        }
-        h2 {
-            margin-bottom: 20px;
-        }
-        input[type="file"] {
-            margin-bottom: 10px;
-        }
-        button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            background-color: #007BFF;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #output {
-            margin-top: 20px;
+            font-family: Arial, sans-serif;
             text-align: center;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 400px;
         }
         img {
-            margin-top: 15px;
-            max-width: 300px;
-            border: 2px solid #333;
-            border-radius: 10px;
+            margin-top: 20px;
+            width: 224px;
+            height: 224px;
+            border: 2px solid #ddd;
         }
     </style>
 </head>
 <body>
-
-    <h2>Upload and Resize Image</h2>
-    <input type="file" id="imageUpload" accept="image/*">
-    <button onclick="uploadImage()">Upload & Resize</button>
-
-    <div id="output"></div>
+    <div class="container">
+        <h2>Upload and Normalize Image</h2>
+        <input type="file" id="imageInput">
+        <button onclick="uploadImage()">Upload and Normalize</button>
+        <div id="result"></div>
+    </div>
 
     <script>
-        async function uploadImage() {
-            const fileInput = document.getElementById('imageUpload');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                alert('Please select an image!');
+        function uploadImage() {
+            const fileInput = document.getElementById('imageInput').files[0];
+            if (!fileInput) {
+                alert('Please select an image.');
                 return;
             }
 
             const formData = new FormData();
-            formData.append('image', file);
+            formData.append('image', fileInput);
 
-            try {
-                const response = await fetch('/upload_resize', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    document.getElementById('output').innerHTML = `
-                        <p><strong>Original Image:</strong></p>
-                        <img src="${result.original_image}" alt="Original Image">
-                        <p><strong>Resized Image:</strong></p>
-                        <img src="${result.resized_image}" alt="Resized Image">
-                    `;
+            fetch('/upload_normalize', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
                 } else {
-                    document.getElementById('output').innerHTML = `<p>Error: ${result.error}</p>`;
+                    document.getElementById('result').innerHTML = `
+                        <p><strong>Original Image:</strong></p>
+                        <img src="${data.original_image}" alt="Original Image">
+                        <p><strong>Resized Image:</strong></p>
+                        <img src="${data.resized_image}" alt="Resized Image">
+                        <p><strong>Normalized Image:</strong></p>
+                        <img src="${data.normalized_image}" alt="Normalized Image">
+                    `;
                 }
-            } catch (error) {
-                console.error('Error uploading image:', error);
-                document.getElementById('output').innerHTML = `<p>Error uploading image.</p>`;
-            }
+            })
+            .catch(error => console.error('Error:', error));
         }
     </script>
-
 </body>
 </html>
