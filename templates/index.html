@@ -3,9 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Caption Generator</title>
+    <title>Image Upload & Convert to JPG</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+            background-color: #f4f4f9;
+        }
+
+        .upload-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .upload-section input {
+            margin: 10px 0;
+        }
+
+        .output {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .output img {
+            max-width: 300px;
+            margin-top: 20px;
+            border: 2px solid #333;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Image Caption Generator</h1>
+    <h2>Upload Image and Convert to JPG</h2>
+    <div class="upload-section">
+        <input type="file" id="imageUpload" accept="image/*">
+        <button onclick="uploadImage()">Upload & Convert</button>
+    </div>
+
+    <div class="output" id="output"></div>
+
+    <script>
+        async function uploadImage() {
+            const fileInput = document.getElementById("imageUpload");
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select an image.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("image", file);
+
+            try {
+                const response = await fetch("/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById("output").innerHTML = `
+                        <p>${result.message}</p>
+                        <img src="${result.image_path}" alt="Converted Image">
+                    `;
+                } else {
+                    alert(result.error);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Error uploading the image.");
+            }
+        }
+    </script>
 </body>
 </html>
