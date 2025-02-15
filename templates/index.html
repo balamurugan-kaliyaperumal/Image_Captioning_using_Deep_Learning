@@ -3,70 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Upload and Normalize</title>
+    <title>Image Caption Generator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f9;
+        }
+
+        header {
             text-align: center;
-            margin: 40px;
-            background-color: #f4f4f4;
+            margin: 20px 0;
         }
+
         .container {
-            margin: 20px auto;
-            padding: 20px;
-            background: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80%;
         }
-        img {
-            margin-top: 20px;
+
+        .upload-section {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .upload-section input[type="file"] {
+            margin-bottom: 20px;
+        }
+
+        .output-section {
+            margin: 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .output-section .image-container {
+            margin: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .output-section img {
             width: 224px;
             height: 224px;
-            border: 2px solid #ddd;
+            object-fit: cover;
+            border: 2px solid #ccc;
+            margin: 0 10px;
+        }
+
+        .output-section .details-container {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .arrow {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 16px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .patch-square {
+    display: grid;
+    grid-template-columns: repeat(14, 16px);
+    grid-template-rows: repeat(14, 16px);
+    gap: 2px;
+    background: #fff;    
+    width: 275px; 
+    height: 260px;
+    padding: 5px;
+}
+
+.patch-square img {
+    width: 16px;
+    height: 16px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+}
+
+
+        .file-info {
+            font-size: 14px;
+            margin: 10px 0;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Image Caption Generator</h1>
+    </header>
+
     <div class="container">
-        <h2>Upload and Normalize Image</h2>
-        <input type="file" id="imageInput">
-        <button onclick="uploadImage()">Upload and Normalize</button>
-        <div id="result"></div>
+        <div class="upload-section">
+            <input type="file" id="imageUpload" accept="image/*">
+            <button id="generateButton">Generate Caption</button>
+        </div>
+
+        <div id="output" class="output-section">
+            
+        </div>
     </div>
 
     <script>
-        function uploadImage() {
-            const fileInput = document.getElementById('imageInput').files[0];
-            if (!fileInput) {
-                alert('Please select an image.');
+        const imageUpload = document.getElementById("imageUpload");
+        const generateButton = document.getElementById("generateButton");
+        const output = document.getElementById("output");
+
+        generateButton.addEventListener("click", async () => {
+            const file = imageUpload.files[0];
+            if (!file) {
+                alert("Please select an image.");
                 return;
             }
 
             const formData = new FormData();
-            formData.append('image', fileInput);
+            formData.append("image", file);
 
-            fetch('/upload_normalize', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    document.getElementById('result').innerHTML = `
-                        <p><strong>Original Image:</strong></p>
-                        <img src="${data.original_image}" alt="Original Image">
-                        <p><strong>Resized Image:</strong></p>
-                        <img src="${data.resized_image}" alt="Resized Image">
-                        <p><strong>Normalized Image:</strong></p>
-                        <img src="${data.normalized_image}" alt="Normalized Image">
-                    `;
+            try {
+                const response = await fetch("/generate_caption", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to process image.");
                 }
-            })
-            .catch(error => console.error('Error:', error));
-        }
+
+                const data = await response.json();
+                output.innerHTML = `
+                    
+                    <div class="image-container">
+                        <div>
+                            <div class="subtitle">Original Image</div>
+                            <img src="${data.image_path}" alt="Original Image">
+                            
+                        </div>
+                        <span class="arrow">&#8594;</span>
+                        <div>
+                            <div class="subtitle">Resized Image</div>
+                            <img src="${data.resized_image_path}" alt="Resized Image">
+                        </div>
+                        <span class="arrow">&#8594;</span>
+                        <div>
+                            <div class="subtitle">Normalized Image</div>
+                            <img src="${data.normalized_image_path}" alt="Normalized Image">
+                        </div>
+                        <span class="arrow">&#8594;</span>
+                        <div>
+                            <div class="subtitle">Extracted Patches</div>
+                            <div class="patch-square">
+    ${data.patches.map(patch => `<img src="${patch}" alt="Patch">`).join("")}
+</div>
+
+                        </div>
+                    </div>
+                    <p><strong>Caption:</strong> ${data.caption}</p>
+                `;
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred while processing the image.");
+            }
+        });
     </script>
 </body>
 </html>
