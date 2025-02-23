@@ -14,3 +14,4 @@ pip install Flask torch numpy Pillow werkzeug
 7. Flattened the Patches (2D shape to 1D vector)(768 tokens for each patch) and the resulted text file stored in the text_output folder
 8. Apply Linear Projection (768 -> 512 tokens) and the output file stored in the text_output folder
 9. Patch + Position embedding has been successfully completed and the output text file stored in the text_output folder
+10. Feature vector extraction using ViT encoder (MHSA, Add Norm, FFN, Add Norm)
