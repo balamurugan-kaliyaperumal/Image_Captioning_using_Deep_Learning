@@ -15,3 +15,5 @@ pip install Flask torch numpy Pillow werkzeug
 8. Apply Linear Projection (768 -> 512 tokens) and the output file stored in the text_output folder
 9. Patch + Position embedding has been successfully completed and the output text file stored in the text_output folder
 10. Feature vector extraction using ViT encoder (MHSA, Add Norm, FFN, Add Norm)
+    run the app.py file to extract the feature vectors and the output is (196,512)
+11. extract the feature vector for entire dataset and merged into a single file
