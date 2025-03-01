@@ -1,7 +1,5 @@
-# create_dataset.py
-# Script to preprocess dataset for image captioning: loads annotations, ViT features, tokenizes captions,
-# and creates a batched TensorFlow dataset.
 
+# Script to preprocess dataset for image captioning: loads annotations, ViT features, tokenizes captions, and creates a batched TensorFlow dataset.
 import json
 import numpy as np
 import tensorflow as tf
@@ -17,7 +15,7 @@ def create_dataset():
         captions_data = json.load(file)
 
     # Load ViT features
-    vit_features = np.load(r"D:\grok\Image_Captioning_using_Deep_Learning\vit_features_merged.npy")
+    vit_features = np.load(r"D:\Image_Captioning_using_Deep_Learning\vit_features_merged.npy")
     print("✅ ViT Features Shape (raw):", vit_features.shape)
 
     # Extract unique image filenames
@@ -99,9 +97,9 @@ def create_dataset():
     print("✅ Dataset prepared successfully!")
 
     # Save tokenizer
-    with open(r"D:\grok\Image_Captioning_using_Deep_Learning\tokenizer.json", "w") as f:
+    with open(r"D:\Image_Captioning_using_Deep_Learning\tokenizer.json", "w") as f:
         f.write(tokenizer.to_json())
-    print("Tokenizer saved at D:\\grok\\Image_Captioning_using_Deep_Learning\\tokenizer.json")
+    print("Tokenizer saved at D:\\Image_Captioning_using_Deep_Learning\\tokenizer.json")
 
     print("\nDebug: First 5 unique image filenames:", unique_image_filenames[:5])
 
