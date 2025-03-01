@@ -5,7 +5,7 @@ import json
 # Define global vocab_size (used in inference functions)
 vocab_size = 15000  # Match your model's vocab_size
 
-# Define PositionalEncoding class
+
 @tf.keras.utils.register_keras_serializable()
 class PositionalEncoding(tf.keras.layers.Layer):
     def __init__(self, max_length, d_model, **kwargs):
@@ -214,7 +214,7 @@ def generate_caption_beam_search(image_feature, max_length=80, beam_width=5):
     caption = " ".join([tokenizer.index_word.get(id, "<unk>") for id in best_seq[1:end_idx]])
     return caption, best_seq[:end_idx]
 
-# Test caption generation for specific images
+
 test_images = ["1000092795.jpg", "10002456.jpg"]
 for img_name in test_images:
     idx = image_filenames.index(img_name)
