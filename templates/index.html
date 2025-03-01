@@ -14,19 +14,16 @@
             align-items: center;
             background-color: #f4f4f9;
         }
-
         header {
             text-align: center;
             margin: 20px 0;
         }
-
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 80%;
         }
-
         .upload-section {
             margin: 20px 0;
             display: flex;
@@ -37,11 +34,9 @@
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
             border-radius: 10px;
         }
-
         .upload-section input[type="file"] {
             margin-bottom: 20px;
         }
-
         .output-section {
             margin: 30px 0;
             display: flex;
@@ -49,13 +44,11 @@
             justify-content: center;
             align-items: center;
         }
-
         .output-section .image-container {
             margin: 10px;
             display: flex;
             align-items: center;
         }
-
         .output-section img {
             width: 224px;
             height: 224px;
@@ -63,7 +56,6 @@
             border: 2px solid #ccc;
             margin: 0 10px;
         }
-
         .output-section .details-container {
             background: #fff;
             padding: 15px;
@@ -71,38 +63,32 @@
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
         }
-
         .arrow {
             font-size: 24px;
             font-weight: bold;
         }
-
         .subtitle {
             text-align: center;
             font-size: 16px;
             margin: 10px 0;
             font-weight: bold;
         }
-
         .patch-square {
-    display: grid;
-    grid-template-columns: repeat(14, 16px);
-    grid-template-rows: repeat(14, 16px);
-    gap: 2px;
-    background: #fff;    
-    width: 275px; 
-    height: 260px;
-    padding: 5px;
-}
-
-.patch-square img {
-    width: 16px;
-    height: 16px;
-    object-fit: cover;
-    border: 1px solid #ddd;
-}
-
-
+            display: grid;
+            grid-template-columns: repeat(14, 16px);
+            grid-template-rows: repeat(14, 16px);
+            gap: 2px;
+            background: #fff;
+            width: 275px;
+            height: 260px;
+            padding: 5px;
+        }
+        .patch-square img {
+            width: 16px;
+            height: 16px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+        }
         .file-info {
             font-size: 14px;
             margin: 10px 0;
@@ -120,9 +106,7 @@
             <button id="generateButton">Generate Caption</button>
         </div>
 
-        <div id="output" class="output-section">
-            
-        </div>
+        <div id="output" class="output-section"></div>
     </div>
 
     <script>
@@ -152,33 +136,33 @@
 
                 const data = await response.json();
                 output.innerHTML = `
-                    
                     <div class="image-container">
                         <div>
                             <div class="subtitle">Original Image</div>
                             <img src="${data.image_path}" alt="Original Image">
-                            
                         </div>
-                        <span class="arrow">&#8594;</span>
+                        <span class="arrow">→</span>
                         <div>
                             <div class="subtitle">Resized Image</div>
                             <img src="${data.resized_image_path}" alt="Resized Image">
                         </div>
-                        <span class="arrow">&#8594;</span>
+                        <span class="arrow">→</span>
                         <div>
                             <div class="subtitle">Normalized Image</div>
                             <img src="${data.normalized_image_path}" alt="Normalized Image">
                         </div>
-                        <span class="arrow">&#8594;</span>
+                        <span class="arrow">→</span>
                         <div>
                             <div class="subtitle">Extracted Patches</div>
                             <div class="patch-square">
-    ${data.patches.map(patch => `<img src="${patch}" alt="Patch">`).join("")}
-</div>
-
+                                ${data.patches.map(patch => `<img src="${patch}" alt="Patch">`).join("")}
+                            </div>
                         </div>
                     </div>
-                    <p><strong>Caption:</strong> ${data.caption}</p>
+                    <div class="details-container">
+                        <p><strong>Sampling Caption:</strong> ${data.caption}</p>
+                        <p><strong>Beam Search Caption:</strong> ${data.caption_beam}</p>
+                    </div>
                 `;
             } catch (error) {
                 console.error(error);
